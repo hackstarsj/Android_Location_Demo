@@ -23,4 +23,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
+    <Button
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/getlocation"
+        android:textColor="#fff"
+        android:background="@color/colorAccent"
+        android:text="OPEN Map in APP"
+        android:id="@+id/openmap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
 </RelativeLayout>

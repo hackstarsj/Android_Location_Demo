@@ -19,16 +19,21 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements LocationListener {
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
+public class MapActivtiy extends AppCompatActivity implements LocationListener {
+
+    private GoogleMap map;
     private static final int PERMISSION_CODE = 101;
-    TextView locationText;
-    Button getLocation;
     String[] permissions_all={Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION};
     LocationManager locationManager;
     boolean isGpsLocation;
@@ -39,32 +44,24 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        progressDialog=new ProgressDialog(MainActivity.this);
+        setContentView(R.layout.activity_map_activtiy);
+
+        progressDialog=new ProgressDialog(MapActivtiy.this);
         progressDialog.setMessage("Fetching location...");
 
-        locationText=findViewById(R.id.location);
-        getLocation=findViewById(R.id.getlocation);
-
-        getLocation.setOnClickListener(new View.OnClickListener() {
+        SupportMapFragment mapFragment=(SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
-            public void onClick(View v) {
-                progressDialog.show();
+            public void onMapReady(GoogleMap googleMap) {
+                map=googleMap;
                 getLocation();
-            }
-        });
-
-        Button openmap=findViewById(R.id.openmap);
-
-        openmap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this,MapActivtiy.class));
+                //now map is ready let's show my current location in map
             }
         });
     }
 
     private void getLocation() {
+        progressDialog.show();
         if(Build.VERSION.SDK_INT>=23){
             if(checkPermission()){
                 getDeviceLocation();
@@ -79,12 +76,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
     private void requestPermission() {
-        ActivityCompat.requestPermissions(MainActivity.this,permissions_all,PERMISSION_CODE);
+        ActivityCompat.requestPermissions(MapActivtiy.this,permissions_all,PERMISSION_CODE);
     }
 
     private boolean checkPermission() {
         for(int i=0;i<permissions_all.length;i++){
-            int result= ContextCompat.checkSelfPermission(MainActivity.this,permissions_all[i]);
+            int result= ContextCompat.checkSelfPermission(MapActivtiy.this,permissions_all[i]);
             if(result== PackageManager.PERMISSION_GRANTED){
                 continue;
             }
@@ -126,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode){
             case PERMISSION_CODE:
-                if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                if(grantResults.length>0 && grantResults[0]== PackageManager.PERMISSION_GRANTED){
                     getFinalLocation();
                 }
                 else{
@@ -139,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         //one thing i missed in permission let's complete it
         try{
             if(isGpsLocation){
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000*60*1,10,MainActivity.this);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000*60*1,10,MapActivtiy.this);
                 if(locationManager!=null){
                     loc=locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     if(loc!=null){
@@ -148,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 }
             }
             else if(isNetworklocation){
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,1000*60*1,10,MainActivity.this);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,1000*60*1,10,MapActivtiy.this);
                 if(locationManager!=null){
                     loc=locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                     if(loc!=null){
@@ -172,14 +169,18 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         }
         else{
             progressDialog.dismiss();
-            locationText.setText("Location : "+loc.getLatitude()+" , "+loc.getLongitude());
+            //now adding current location in map
+            LatLng latLng=new LatLng(loc.getLatitude(),loc.getLongitude());
+            map.addMarker(new MarkerOptions().position(latLng).title("Current Location"));
+            map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,15f));
 
         }
 
     }
 
     private void showSettingForLocation() {
-        AlertDialog.Builder al=new AlertDialog.Builder(MainActivity.this);
+        AlertDialog.Builder al=new AlertDialog.Builder(MapActivtiy.this);
         al.setTitle("Location Not Enabled!");
         al.setMessage("Enable Location ?");
         al.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
