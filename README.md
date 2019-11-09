@@ -1,0 +1,9 @@
+# Android_Location_Demo
+Android_Location_Demo
+
+How to Get Latitude and Longitude from Android Device Tutorial
+In This Tutorial I Cover: 
+1. How to Get Latitude and Longitude from Android Device
+2. How to Get Runtime Location Permission
+3. Android Multiple Permission
+4. Android Location Tutorial
