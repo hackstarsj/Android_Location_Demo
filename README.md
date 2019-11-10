@@ -7,3 +7,6 @@ In This Tutorial I Cover:
 2. How to Get Runtime Location Permission
 3. Android Multiple Permission
 4. Android Location Tutorial
+
+<br>
+<h3>Added Google Map With Current Location Marker</h2>
