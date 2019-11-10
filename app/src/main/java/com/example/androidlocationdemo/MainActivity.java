@@ -62,6 +62,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 startActivity(new Intent(MainActivity.this,MapActivtiy.class));
             }
         });
+
+        Button fetch_current_location=findViewById(R.id.fetch_current_location);
+        fetch_current_location.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,MapWithPlayServiceLocationActivity.class));
+            }
+        });
     }
 
     private void getLocation() {

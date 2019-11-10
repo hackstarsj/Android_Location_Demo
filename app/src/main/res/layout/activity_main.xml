@@ -33,4 +33,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
+    <Button
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/openmap"
+        android:textColor="#fff"
+        android:background="@color/colorAccent"
+        android:textSize="14sp"
+        android:text="OPEN Map in APP With Google Play Service Location"
+        android:id="@+id/fetch_current_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
 </RelativeLayout>
